@@ -4,13 +4,15 @@ import { useState } from "react";
 
 function App() {
   let post = "강남 우동 맛집";
-  let [글제목, b] = useState([
+  let [글제목, 글제목변경] = useState([
     "남자 코드 추천",
     "강남 우동 맛집",
     "파이썬독학",
   ]);
+  let [title, setTitle] = useState(0);
+
   let logo = "ReactBlog";
-  let [like, setLike] = useState(0);
+  let [like, setLike] = useState([0, 0, 0]);
   let [modal, setModal] = useState(false); // switch 느낌
 
   return (
@@ -20,16 +22,14 @@ function App() {
       </div>
       <button
         onClick={() => {
-          // b(["여자 코드 추천", "강남 우동 맛집", "파이썬독학"]);
-          // 글제목[0] = '여자코트 추천';
           let copy = [...글제목];
           copy[0] = "여자코트 추천";
-          b(copy);
+          글제목변경(copy);
         }}
       >
         글 수정
       </button>
-      <div className="list">
+      {/* <div className="list">
         <h4>
           {글제목[0]}
           <span
@@ -57,19 +57,61 @@ function App() {
           {글제목[2]}
         </h4>
         <p>2월 17일 발행</p>
-      </div>
+      </div> */}
 
-      {modal == true ? <Modal /> : null}
+      {글제목.map((t, i) => {
+        return (
+          <div className="list" key={i}>
+            <h4
+              onClick={() => {
+                setModal(!modal);
+                setTitle(i);
+              }}
+            >
+              {글제목[i]}
+              <span
+                onClick={() => {
+                  let copy = [...like];
+                  copy[i] = copy[i] + 1;
+                  setLike(copy);
+                }}
+              >
+                👋
+              </span>
+              {like[i]}
+            </h4>
+            <p>2월 17일 발행</p>
+          </div>
+        );
+      })}
+
+      {modal == true ? (
+        <Modal
+          color={"skyblue"}
+          글제목={글제목}
+          title={title}
+          글제목변경={글제목변경}
+        />
+      ) : null}
     </div>
   );
 }
 
-function Modal() {
+function Modal(props) {
   return (
-    <div className="modal">
-      <h4>제목</h4>
+    <div className="modal" style={{ background: props.color }}>
+      <h4>{props.글제목[props.title]}</h4>
       <p>날짜</p>
       <p>상세내용</p>
+      <button
+        onClick={() => {
+          let copy = [...props.글제목];
+          copy[0] = "여자코트 추천";
+          props.글제목변경(copy);
+        }}
+      >
+        글수정
+      </button>
     </div>
   );
 }
